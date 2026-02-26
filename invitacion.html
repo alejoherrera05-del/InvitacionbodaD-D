@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boda Daniel y Daniela</title>
+    
+    <meta property="og:title" content="INVITACIÓN BODA | DANIEL Y DANIELA">
+    <meta property="og:description" content="Te invitamos a que nos acompañes en este día tan especial.">
+    <meta property="og:image" content="logoboda.png">
+    <meta property="og:type" content="website">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         /* --- VARIABLES Y LIBRERÍA DE ESTILOS --- */
@@ -140,7 +146,6 @@
             padding: 80px 20px;
             text-align: center;
         }
-        /* NUEVO: ESTILO PARA EL LOGO MOVIDO */
         .section-logo {
             width: 160px;
             margin: 0 auto 15px auto;
@@ -574,7 +579,6 @@
     </div>
 
     <script>
-        // 1. CUENTA REGRESIVA
         const weddingDate = new Date("August 15, 2026 15:00:00").getTime();
         const countdownFunction = setInterval(() => {
             const now = new Date().getTime();
@@ -593,7 +597,6 @@
             }
         }, 1000);
 
-        // 2. CONEXIÓN A GOOGLE SHEETS Y LÓGICA DEL MODAL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbOtTuEiAdlMfgFTn7VcH08L28n-y-KL8fwkNR3MJpKfSgJ0nxkgrljYXT_wJLso99/exec';
         const form = document.forms['rsvp-form'];
         const btn = document.getElementById('submit-btn');
@@ -611,7 +614,6 @@
             
             fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                 .then(response => {
-                    // CONFIGURAR TEXTOS DEL MODAL SEGÚN RESPUESTA
                     if (isAttending) {
                         modalTitle.innerHTML = '¡Confirmación Exitosa!';
                         modalMessage.innerHTML = 'Estamos encantados de contar con tu presencia en este día tan especial para nosotros. ¡Nos vemos en la boda!';
@@ -620,7 +622,6 @@
                         modalMessage.innerHTML = 'Lamentamos mucho que no puedas acompañarnos, pero agradecemos inmensamente que nos hayas avisado. ¡Un abrazo enorme!';
                     }
                     
-                    // MOSTRAR MODAL Y RESETEAR
                     modal.style.display = 'flex';
                     btn.innerHTML = originalBtnText;
                     btn.classList.remove('loading');
