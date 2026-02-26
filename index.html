@@ -76,7 +76,8 @@
             padding-bottom: 10vh;
             align-items: center;
             text-align: center;
-            background-image: url('portada.jpeg'); 
+            /* SE INYECTÓ LA NUEVA FOTO DE PORTADA AQUÍ */
+            background-image: url('DSC06834.jpg'); 
             background-size: cover;
             background-position: center top;
             color: var(--white);
@@ -310,7 +311,7 @@
         .hotel-list li { margin-bottom: 25px; position: relative; padding-left: 20px;}
         .hotel-list li::before { content: '•'; color: var(--primary); position: absolute; left:0; font-size: 1.5rem; line-height: 1;}
 
-        /* --- IMÁGENES INTERMEDIAS (PARALLAX) --- */
+        /* --- IMÁGENES INTERMEDIAS (PARALLAX Y RESPONSIVE) --- */
         .img-break {
             height: 350px;
             background-size: cover;
@@ -326,6 +327,14 @@
         }
         .img-1 { background-image: url('DSC06764.jpeg'); }
         .img-2 { background-image: url('DSC06921.jpeg'); }
+
+        /* ¡MEDIA QUERY: LA VACUNA PARA CELULARES! */
+        @media (max-width: 768px) {
+            .img-break {
+                background-attachment: scroll; /* Apaga el efecto que causa el zoom masivo en iOS/Móviles */
+                background-position: center center; /* Centra la imagen limpia */
+            }
+        }
 
         /* --- FORMULARIO RSVP --- */
         form {
