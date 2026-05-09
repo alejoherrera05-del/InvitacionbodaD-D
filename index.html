@@ -34,7 +34,7 @@
             font-weight: 600;
         }
 
-        /* --- INTRO ANIMACIÓN SOBRE (NUEVO IMPLANTE) --- */
+        /* --- INTRO ANIMACIÓN SOBRE --- */
         .no-scroll { overflow: hidden; height: 100vh; }
         #intro-loader {
             position: fixed;
@@ -277,7 +277,7 @@
             color: var(--white);
         }
 
-        /* --- DRESS CODE NEUTRALIZADO --- */
+        /* --- DRESS CODE --- */
         .dress-code-container {
             display: flex;
             flex-direction: column;
@@ -383,7 +383,7 @@
         .hotel-list li { margin-bottom: 25px; position: relative; padding-left: 20px;}
         .hotel-list li::before { content: '•'; color: var(--primary); position: absolute; left:0; font-size: 1.5rem; line-height: 1;}
 
-        /* --- IMÁGENES INTERMEDIAS (PARALLAX Y RESPONSIVE) --- */
+        /* --- IMÁGENES INTERMEDIAS --- */
         .img-break {
             height: 350px;
             background-size: cover;
@@ -474,19 +474,19 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- LIGHTBOX INSPIRACIÓN --- */
+        /* --- LIGHTBOX INSPIRACIÓN (VERSIÓN PREMIUM) --- */
         #lightbox-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.85); /* Fondo oscuro profundo */
             z-index: 10000;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px); /* Desenfoque elegante */
             align-items: center;
             justify-content: center;
             flex-direction: column;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
         #lightbox-modal.show {
             display: flex;
@@ -495,10 +495,12 @@
         .lightbox-content {
             max-width: 90%;
             max-height: 85vh;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
+            border-radius: 12px; /* Esquinas suavizadas en la imagen */
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6); /* Sombra amplia y difuminada */
+            transform: scale(0.9); /* Inicia un poco más pequeña */
+            /* Curva bezier para un aterrizaje suave y orgánico */
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+            object-fit: contain;
         }
         #lightbox-modal.show .lightbox-content {
             transform: scale(1);
@@ -506,17 +508,31 @@
         .lightbox-close {
             position: absolute;
             top: 25px;
-            right: 35px;
-            color: var(--white);
-            font-size: 40px;
-            font-weight: 300;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            transition: color 0.3s;
-            font-family: sans-serif;
-            line-height: 1;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+        .lightbox-close svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .lightbox-close:hover {
-            color: var(--primary);
+            color: var(--white);
+            background: var(--primary);
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -713,7 +729,11 @@
     </div>
 
     <div id="lightbox-modal" onclick="closeLightbox(event)">
-        <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
+        <div class="lightbox-close" onclick="closeLightbox(event)">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </div>
         <img class="lightbox-content" id="lightbox-img" src="inspiracion.png" alt="Inspiración de Vestimenta">
     </div>
 
@@ -778,36 +798,37 @@
 
         // 3. ANIMACIÓN DEL SOBRE INTRODUCTORIO
         window.addEventListener('load', () => {
-            // El tiempo total de la animación antes de revelar la página (2.5 segundos)
             setTimeout(() => {
                 const loader = document.getElementById('intro-loader');
                 loader.classList.add('hide-loader');
                 document.body.classList.remove('no-scroll');
                 
-                // Remover el sobre del código después de desvanecerse para que no estorbe clics
                 setTimeout(() => { loader.remove(); }, 800);
             }, 2500); 
         });
 
-        // 4. LIGHTBOX INSPIRACIÓN
+        // 4. LIGHTBOX INSPIRACIÓN (CON TRANSICIONES AJUSTADAS)
         function openLightbox() {
             const lightbox = document.getElementById('lightbox-modal');
             lightbox.style.display = 'flex';
+            // Pequeño retraso para que el navegador registre el display:flex antes de animar
             setTimeout(() => { 
                 lightbox.classList.add('show'); 
             }, 10);
-            document.body.classList.add('no-scroll'); // Previene el scroll del fondo
+            document.body.classList.add('no-scroll'); 
         }
 
         function closeLightbox(e) {
-            // Cierra si se hace clic fuera de la imagen o en la X
+            // El return asegura que si se da clic *exactamente* sobre la imagen, no se cierre. 
+            // Si se hace clic en el fondo oscuro o en la X, se ejecuta el cierre.
             if (e && e.target.id === 'lightbox-img') return; 
+            
             const lightbox = document.getElementById('lightbox-modal');
             lightbox.classList.remove('show');
             setTimeout(() => { 
                 lightbox.style.display = 'none'; 
                 document.body.classList.remove('no-scroll');
-            }, 300); // Mismo tiempo que la transición CSS
+            }, 400); // 400ms emparejado con la transición del CSS
         }
     </script>
 </body>
