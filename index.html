@@ -304,7 +304,7 @@
             border-top: 1px dashed #e0e0e0;
         }
         .avoid-text {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -312,22 +312,31 @@
             margin-bottom: 12px;
             display: block;
         }
-        .color-circles {
+        .avoid-list {
             display: flex;
-            justify-content: center;
             flex-wrap: wrap;
-            gap: 12px;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .avoid-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 500;
         }
         .color-circle {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            border: 1px solid #dcdcdc;
-            opacity: 0.65;
-            transition: opacity 0.3s;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            border: 1px solid #cccccc;
+            opacity: 1;
+            transition: transform 0.3s;
         }
-        .color-circle:hover { opacity: 1; }
+        .color-circle:hover { transform: scale(1.1); }
 
         /* --- NOTAS IMPORTANTES --- */
         .notes-grid {
@@ -575,9 +584,9 @@
             <h3 style="font-size: 2rem; margin-bottom: 15px; color: var(--text-dark);">Ceremonia y Recepción</h3>
             <p style="font-size: 1.1rem; margin-bottom: 5px;"><strong>Sábado, 15 de Agosto de 2026</strong></p>
             <p style="font-size: 1.1rem; margin-bottom: 15px;"><strong>3:00 PM</strong></p>
-            <p style="color: var(--text-gray);">La Hacienda el Ensueño</p>
+            <p style="color: var(--text-gray);">Hacienda el Ensueño</p>
             <p style="font-size: 0.9rem; color: #999; margin-bottom: 20px;">(Ruitoque Bajo) Bucaramanga</p>
-            <a href="https://share.google/lyIx6ecwBicFPIMmi" target="_blank" class="btn">Ver Mapa / Cómo llegar</a>
+            <a href="https://share.google/AcaFXU6sr5hWdTcP3" target="_blank" class="btn">Ver Mapa / Cómo llegar</a>
         </div>
     </section>
 
@@ -595,11 +604,19 @@
                 <p>Traje formal (Corbata opcional).</p>
                 <div class="avoid-section">
                     <span class="avoid-text">Sugerimos evitar:</span>
-                    <div class="color-circles">
-                        <div class="color-circle" style="background-color: #2c3e50;" title="Azul Marino"></div>
-                        <div class="color-circle" style="background-color: #7fb3d5;" title="Azul Claro"></div>
-                        <div class="color-circle" style="background-color: #808080;" title="Gris"></div>
-                        <div class="color-circle" style="background-color: #556B2F;" title="Verde Olivo"></div>
+                    <div class="avoid-list">
+                        <div class="avoid-item">
+                            <div class="color-circle" style="background-color: #2c3e50;" title="Azul y derivados"></div>
+                            <span>Azul y sus derivados</span>
+                        </div>
+                        <div class="avoid-item">
+                            <div class="color-circle" style="background-color: #556B2F;" title="Verde Oliva"></div>
+                            <span>Verde Oliva</span>
+                        </div>
+                        <div class="avoid-item">
+                            <div class="color-circle" style="background-color: #808080;" title="Gris"></div>
+                            <span>Gris</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -610,12 +627,15 @@
                 <p>Vestido largo.</p>
                 <div class="avoid-section">
                     <span class="avoid-text">Sugerimos evitar:</span>
-                    <div class="color-circles">
-                        <div class="color-circle" style="background-color: #ffffff;" title="Blanco"></div>
-                        <div class="color-circle" style="background-color: #c0392b;" title="Rojo"></div>
-                        <div class="color-circle" style="background-color: #733635;" title="Pantone Vintage Wine"></div>
-                        <div class="color-circle" style="background-color: #a82329;" title="Pantone Red Inferno"></div>
-                        <div class="color-circle" style="background-color: #741320;" title="Pantone Sceptre Red"></div>
+                    <div class="avoid-list">
+                        <div class="avoid-item">
+                            <div class="color-circle" style="background-color: #ffffff;" title="Blanco"></div>
+                            <span>Blanco</span>
+                        </div>
+                        <div class="avoid-item">
+                            <div class="color-circle" style="background-color: #c0392b;" title="Rojo y derivados"></div>
+                            <span>Rojo y sus derivados</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -691,7 +711,7 @@
         <svg class="icon-premium" style="width: 50px; height: 50px; margin: 0 auto 15px; display:block;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
 
         <p class="rsvp-note">
-            Por favor, confirma tu asistencia antes del<br><strong>1 de Junio de 2026</strong>.
+            Por favor, confirma tu asistencia antes del<br><strong>1 de Julio de 2026</strong>.
         </p>
         
         <form id="rsvp-form" name="rsvp-form">
