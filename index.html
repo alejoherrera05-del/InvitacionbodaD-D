@@ -10,7 +10,7 @@
     <meta property="og:image" content="logoboda.png">
     <meta property="og:type" content="website">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:Sital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         /* --- VARIABLES Y LIBRERÍA DE ESTILOS --- */
         :root {
@@ -479,7 +479,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- LIGHTBOX INSPIRACIÓN (VERSIÓN PREMIUM) --- */
+        /* --- LIGHTBOX INSPIRACIÓN --- */
         #lightbox-modal {
             display: none;
             position: fixed;
@@ -538,9 +538,66 @@
             background: var(--primary);
             transform: scale(1.05);
         }
+
+        /* --- CONTROL DE AUDIO ESTÉTICO --- */
+        .audio-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: rgba(253, 251, 247, 0.85); /* Coincide con var(--bg-light) */
+            border: 1px solid var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9900; 
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(8px);
+            color: var(--primary);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .audio-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            color: var(--white);
+        }
+        .audio-icon-svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* Efecto de pulso elegante cuando suena */
+        .audio-btn.is-playing::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+            animation: pulse-ring 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            box-sizing: border-box;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
     </style>
 </head>
-<body class="no-scroll"> <div id="intro-loader">
+<body class="no-scroll"> 
+
+    <audio id="bg-music" loop>
+        <source src="matthew%20hall%20-%20home%20(official%20visualiser).mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="intro-loader">
         <div class="envelope-wrapper">
             <div class="envelope-flap"></div>
             <div class="envelope-paper">
@@ -742,6 +799,17 @@
         <img class="lightbox-content" id="lightbox-img" src="inspiracion.png" alt="Inspiración de Vestimenta">
     </div>
 
+    <div id="audio-toggle-btn" class="audio-btn" onclick="toggleMusic()">
+        <svg id="icon-play" class="audio-icon-svg" viewBox="0 0 24 24" style="display: block;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <svg id="icon-sound" class="audio-icon-svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+    </div>
+
     <script>
         // 1. CUENTA REGRESIVA
         const weddingDate = new Date("August 15, 2026 15:00:00").getTime();
@@ -801,14 +869,62 @@
                 });
         });
 
-        // 3. ANIMACIÓN DEL SOBRE INTRODUCTORIO
+        // 3. LOGICA DEL AUDIO Y EL SOBRE INTRODUCTORIO
+        const bgMusic = document.getElementById('bg-music');
+        const audioBtnUI = document.getElementById('audio-toggle-btn');
+        const iconPlay = document.getElementById('icon-play');
+        const iconSound = document.getElementById('icon-sound');
+
+        // Función para actualizar la estética del botón
+        function updateAudioUI(isPlaying) {
+            if (isPlaying) {
+                audioBtnUI.classList.add('is-playing');
+                iconPlay.style.display = 'none';
+                iconSound.style.display = 'block';
+            } else {
+                audioBtnUI.classList.remove('is-playing');
+                iconPlay.style.display = 'block';
+                iconSound.style.display = 'none';
+            }
+        }
+
+        // Función que lanza y pausa al tocar el botón
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => updateAudioUI(true)).catch(e => console.log(e));
+            } else {
+                bgMusic.pause();
+                updateAudioUI(false);
+            }
+        }
+
+        // Al cargar la página
         window.addEventListener('load', () => {
             setTimeout(() => {
+                // Quitar el sobre
                 const loader = document.getElementById('intro-loader');
                 loader.classList.add('hide-loader');
                 document.body.classList.remove('no-scroll');
-                
                 setTimeout(() => { loader.remove(); }, 800);
+
+                // INTENTO 1: Reproducir automático cuando se quita el sobre
+                let playPromise = bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        updateAudioUI(true); // ¡El navegador lo permitió!
+                    }).catch(error => {
+                        updateAudioUI(false); // El navegador lo bloqueó
+                        
+                        // INTENTO 2: Truco para reproducir con el primer tap/clic en la pantalla
+                        document.body.addEventListener('click', function fallbackPlay() {
+                            if (bgMusic.paused) {
+                                bgMusic.play().then(() => updateAudioUI(true)).catch(e => console.log(e));
+                            }
+                            // Remover el evento para que solo pase la primera vez
+                            document.body.removeEventListener('click', fallbackPlay);
+                        }, { once: true });
+                    });
+                }
             }, 2500); 
         });
 
