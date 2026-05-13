@@ -34,7 +34,7 @@
             font-weight: 600;
         }
 
-        /* --- INTRO ANIMACIÓN SOBRE --- */
+        /* --- INTRO ANIMACIÓN SOBRE (INTERACTIVA Y TIERNA) --- */
         .no-scroll { overflow: hidden; height: 100vh; }
         #intro-loader {
             position: fixed;
@@ -42,10 +42,13 @@
             background-color: var(--bg-light);
             z-index: 999999;
             display: flex;
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            cursor: pointer; /* Cursor de mano para invitar al toque */
         }
+        
         .envelope-wrapper {
             position: relative;
             width: 320px;
@@ -54,7 +57,18 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             border-bottom-left-radius: 8px;
             border-bottom-right-radius: 8px;
+            animation: floatEnvelope 2.5s infinite ease-in-out; /* Animación de flotar */
         }
+        /* Se detiene de flotar cuando se toca */
+        .envelope-wrapper.is-opening {
+            animation: none;
+        }
+
+        @keyframes floatEnvelope {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
         .envelope-flap {
             position: absolute;
             top: 0; left: 0;
@@ -64,7 +78,6 @@
             border-right: 160px solid transparent;
             transform-origin: top;
             z-index: 4;
-            animation: openFlap 0.8s 0.6s forwards ease-in-out;
         }
         .envelope-front {
             position: absolute;
@@ -87,12 +100,21 @@
             align-items: center;
             border-radius: 5px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            animation: slidePaper 0.8s 1.3s forwards ease-in-out;
+            transform: translateY(0);
         }
         .envelope-paper img {
             width: 100px;
             opacity: 0.9;
         }
+
+        /* Animaciones disparadas por JS paso a paso */
+        .envelope-wrapper.is-opening .envelope-flap {
+            animation: openFlap 0.8s forwards ease-in-out;
+        }
+        .envelope-wrapper.is-extracting .envelope-paper {
+            animation: slidePaper 0.8s forwards ease-in-out;
+        }
+
         @keyframes openFlap {
             0% { transform: rotateX(0deg); z-index: 4; }
             100% { transform: rotateX(180deg); z-index: 1; }
@@ -101,6 +123,34 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(-70px); }
         }
+        
+        /* Textos de la secuencia debajo del sobre */
+        .loading-text-container {
+            margin-top: 50px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            letter-spacing: 2px;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out;
+            font-style: italic;
+        }
+        /* Efecto de latido para llamar la atención antes de tocar */
+        .pulse-text { 
+            animation: pulseOpacity 2s infinite ease-in-out; 
+        }
+        @keyframes pulseOpacity { 
+            0%, 100% { opacity: 0.5; } 
+            50% { opacity: 1; } 
+        }
+
         .hide-loader {
             opacity: 0;
             visibility: hidden;
@@ -546,7 +596,7 @@
             right: 25px;
             width: 50px;
             height: 50px;
-            background: rgba(253, 251, 247, 0.85); /* Coincide con var(--bg-light) */
+            background: rgba(253, 251, 247, 0.85);
             border: 1px solid var(--primary-light);
             border-radius: 50%;
             display: flex;
@@ -573,7 +623,6 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
-        /* Efecto de pulso elegante cuando suena */
         .audio-btn.is-playing::before {
             content: '';
             position: absolute;
@@ -593,8 +642,8 @@
 </head>
 <body class="no-scroll"> 
 
-    <audio id="bg-music" loop>
-        <source src="matthew%20hall%20-%20home%20(official%20visualiser).mp3" type="audio/mpeg">
+    <audio id="bg-music" loop preload="auto">
+        <source src="matthew hall - home (official visualiser).mp3" type="audio/mpeg">
     </audio>
 
     <div id="intro-loader">
@@ -604,6 +653,10 @@
                 <img src="logoboda.png" alt="D&D" onerror="this.src='Logoboda.jpeg'">
             </div>
             <div class="envelope-front"></div>
+        </div>
+        
+        <div class="loading-text-container">
+            <span id="loading-text" class="loading-text pulse-text">Toca el sobre para abrir...</span>
         </div>
     </div>
 
@@ -869,13 +922,12 @@
                 });
         });
 
-        // 3. LOGICA DEL AUDIO Y EL SOBRE INTRODUCTORIO
+        // 3. LÓGICA DE AUDIO Y LA SECUENCIA INTERACTIVA DEL SOBRE
         const bgMusic = document.getElementById('bg-music');
         const audioBtnUI = document.getElementById('audio-toggle-btn');
         const iconPlay = document.getElementById('icon-play');
         const iconSound = document.getElementById('icon-sound');
 
-        // Función para actualizar la estética del botón
         function updateAudioUI(isPlaying) {
             if (isPlaying) {
                 audioBtnUI.classList.add('is-playing');
@@ -888,7 +940,6 @@
             }
         }
 
-        // Función que lanza y pausa al tocar el botón
         function toggleMusic() {
             if (bgMusic.paused) {
                 bgMusic.play().then(() => updateAudioUI(true)).catch(e => console.log(e));
@@ -898,34 +949,57 @@
             }
         }
 
-        // Al cargar la página
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                // Quitar el sobre
-                const loader = document.getElementById('intro-loader');
-                loader.classList.add('hide-loader');
-                document.body.classList.remove('no-scroll');
-                setTimeout(() => { loader.remove(); }, 800);
+        // --- LA MAGIA DE LA SECUENCIA DE APERTURA AL HACER CLIC ---
+        const introLoader = document.getElementById('intro-loader');
+        const envelopeWrapper = document.querySelector('.envelope-wrapper');
+        const loadingText = document.getElementById('loading-text');
+        let envelopeOpened = false; 
 
-                // INTENTO 1: Reproducir automático cuando se quita el sobre
-                let playPromise = bgMusic.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        updateAudioUI(true); // ¡El navegador lo permitió!
-                    }).catch(error => {
-                        updateAudioUI(false); // El navegador lo bloqueó
-                        
-                        // INTENTO 2: Truco para reproducir con el primer tap/clic en la pantalla
-                        document.body.addEventListener('click', function fallbackPlay() {
-                            if (bgMusic.paused) {
-                                bgMusic.play().then(() => updateAudioUI(true)).catch(e => console.log(e));
-                            }
-                            // Remover el evento para que solo pase la primera vez
-                            document.body.removeEventListener('click', fallbackPlay);
-                        }, { once: true });
-                    });
-                }
-            }, 2500); 
+        introLoader.addEventListener('click', () => {
+            if (envelopeOpened) return; // Evita que la animación se dispare dos veces
+            envelopeOpened = true;
+
+            // 1. Darle play a la música INMEDIATAMENTE
+            bgMusic.play().then(() => updateAudioUI(true)).catch(e => console.log("Audio bloquedo", e));
+
+            // 2. Iniciar la animación de la solapa
+            envelopeWrapper.classList.add('is-opening');
+            loadingText.classList.remove('pulse-text'); // Quita el parpadeo
+            
+            // Inicia la transición de textos
+            loadingText.style.opacity = 0; 
+            
+            setTimeout(() => {
+                loadingText.innerText = "Abriendo sobre...";
+                loadingText.style.opacity = 1;
+            }, 300);
+
+            // 3. A los 1.5s, la carta sube y cambia el texto
+            setTimeout(() => {
+                loadingText.style.opacity = 0;
+                setTimeout(() => {
+                    loadingText.innerText = "Sacando el contenido...";
+                    loadingText.style.opacity = 1;
+                    envelopeWrapper.classList.add('is-extracting'); // Hace que el papel suba
+                }, 400); 
+            }, 1500); 
+
+            // 4. A los 3.0s, último texto romántico
+            setTimeout(() => {
+                loadingText.style.opacity = 0;
+                setTimeout(() => {
+                    loadingText.innerText = "Preparando un día especial...";
+                    loadingText.style.opacity = 1;
+                }, 400);
+            }, 3000); 
+
+            // 5. A los 4.5s, desvanecer toda la pantalla para revelar la página
+            setTimeout(() => {
+                introLoader.classList.add('hide-loader');
+                document.body.classList.remove('no-scroll'); 
+                
+                setTimeout(() => { introLoader.remove(); }, 800);
+            }, 4500); 
         });
 
         // 4. LIGHTBOX INSPIRACIÓN
